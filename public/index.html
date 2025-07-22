@@ -1,0 +1,32 @@
+<!DOCTYPE html><html lang="fa"><head><meta charset="UTF-8">
+<title>PS4 Link Extractor</title>
+<style>
+body{font-family:sans-serif;direction:rtl;padding:20px;background:#f7f9fa}
+input,button{width:100%;padding:10px;margin:8px 0;font-size:16px}
+button{background:#0070f3;border:none;color:#fff;cursor:pointer}
+pre{background:#eee;padding:12px;border-radius:6px;white-space:pre-wrap}
+</style></head><body>
+<h2>استخراج لینک‌های MediaFire</h2>
+<input id="url" placeholder="https://dlpsgame.com/..." />
+<button onclick="run()">استخراج</button>
+<pre id="out">لینک را وارد کنید…</pre>
+<script>
+async function run(){
+  const out=document.getElementById('out');
+  const page=document.getElementById('url').value.trim();
+  if(!page) return alert('لینک را وارد کنید');
+  out.textContent='⏳ ...';
+  try{
+    const api=`/api/extract?url=${encodeURIComponent(page)}`;
+    const data=await fetch(api).then(r=>r.json());
+    if(data.error) throw new Error(data.error);
+    let txt='';
+    Object.entries(data).forEach(([cusa,links])=>{
+      txt+=`▶ ${cusa}\n`;
+      links.forEach((l,i)=>txt+=`  [${i+1}] ${l}\n`);
+      txt+='\n';
+    });
+    out.textContent=txt;
+  }catch(e){out.textContent='❌ '+e.message;}
+}
+</script></body></html>
